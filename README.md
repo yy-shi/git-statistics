@@ -1,4 +1,4 @@
-# git-statistics
+git-statistics
 ==============
 
 * 支持mac 和 linux
