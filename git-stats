@@ -11,6 +11,10 @@ else
     path="";
 fi;
 
+if [ $datestr = "--help" ] || [ $datestr = "?" ] ;then
+echo 'git stats [[-][number]|all|lastweek  lastweek]  [path  .]';
+exit;
+fi;
 sinceday=""
 beforeday=""
 valid=false
