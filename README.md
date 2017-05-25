@@ -1,6 +1,6 @@
 # git-statistics
 
-支持mac 和 linux
+* 支持mac 和 linux
 ==============
 
 使用方法
