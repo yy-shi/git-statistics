@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+if [ $# -ge 1 ];then
+    datestr=$1
+else
+    datestr="lastweek";
+fi;
+
+if [ $# -ge 2 ];then
+    path=$2
+else
+    path="";
+fi;
+
+sinceday=""
+beforeday=""
+valid=false
+isNumber=`grep '^[-[:digit:]]*$' <<< "$datestr"`
+if [ "$(uname)" == "Darwin" ]; then
+    if [ $datestr = "lastweek" ];then
+        beforeday="--before="`date -v -sat "+%Y-%m-%d"`
+        startTime=$[`date -v -sat "+%s"`- 7*86400]
+        sinceday="--since="`date -r $startTime "+%Y-%m-%d"`
+        valid=true
+    fi;
+    if [ "$isNumber" != "" ];then
+        valid=true
+        if [ "$datestr" -gt 0 ];then
+            sinceday="--since="`date -v -${datestr#-}d "+%Y-%m-%d"`
+        else
+            beforeday="--before="`date -v -${datestr#-}d "+%Y-%m-%d"`
+        fi;
+    fi;
+elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+    if [ $datestr = "lastweek" ];then
+        beforeday="--before="`date -d "last Saturday" "+%Y-%m-%d"`
+        startTime=$[`date -d  "last Saturday" "+%s"`- 7*86400]
+        sinceday="--since="`date -d @$startTime "+%Y-%m-%d"`
+    fi;
+    if [ "$isNumber" != "" ];then
+        if [ "$datestr" -gt 0 ];then
+            sinceday="--since="`date -d "-${datestr#-} days" "+%Y-%m-%d"`
+        else
+            beforeday="--before="`date -d "-${datestr#-} days" "+%Y-%m-%d"`
+        fi;
+    fi;
+fi
+if [ $datestr = "all" ];then
+    beforeday="";
+    sinceday="";
+fi;
+Authors=`git shortlog -sne | awk '{print $2}'`
+if [ "$sinceday" != "" ] || [ "$beforeday" != "" ]; then
+    echo  -e  "\033[32mget stas " $sinceday $beforeday  "\033[0m";
+fi;
+for author in ${Authors}
+do
+   git log --author=$author --pretty=tformat: --numstat $sinceday $beforeday $path | awk '{ add += $1 ; subs += $2 ; loc += $1 + $2 } END { printf "'$author'  %s+  %s- total lines: %s\n",add,subs,loc }'
+done
+
+
+
