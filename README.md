@@ -10,7 +10,7 @@ git-statistics
 * 然后再git目录执行 git stats
 
 
-git stats --help
+git stats ?
 ==============
 * git stats [[-][number]|all|lastweek lastweek]  [path .]
 * 第一个参数胃 all lastweek 或者数字  ，1 表示1天内  －1表示一天前
